@@ -39,6 +39,7 @@ def generar_backup_bd_memoria():
         
         env = os.environ.copy()
         env['PGPASSWORD'] = Config.DB_PASSWORD
+        env['PGSSLMODE']='require'
 
         comando_pg_dump = buscar_pg_dump()
 

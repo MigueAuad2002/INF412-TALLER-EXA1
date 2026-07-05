@@ -32,6 +32,8 @@ def manual_backup(token_data: dict = Depends(verificar_token)):
         )
         
     except RuntimeError as e:
+        print(f"ERROR REAL DEL SERVICIO DE BACKUP: {e}")
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
+        print(f'ERROR INESPERADO: {e}')
         raise HTTPException(status_code=500, detail=f"Error interno: {str(e)}")

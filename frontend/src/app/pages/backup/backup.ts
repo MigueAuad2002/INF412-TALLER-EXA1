@@ -61,15 +61,29 @@ export class BackupComponent {
         this.cargandoManual = false;
         this.cdr.detectChanges(); // <-- OBLIGA A QUITAR EL LOADER
       },
-      error: (err) => {
-        console.error(err);
+      error: async (err) => {
+        console.error('Error completo recibido:', err);
         this.cargandoManual = false;
+
+        let mensajeError = 'Error al generar la copia de seguridad. Verifica la conexión.';
+
         if (err.status === 403) {
-          this.mostrarMensaje('Acceso denegado. Solo los administradores pueden hacer esto.', 'error');
-        } else {
-          this.mostrarMensaje('Error al generar la copia de seguridad. Verifica la conexión.', 'error');
+          mensajeError = 'Acceso denegado. Solo los administradores pueden hacer esto.';
+        } else if (err.error instanceof Blob && err.error.type === 'application/json') {
+          // <-- DESENCAPSULAMOS EL BLOB PARA LEER EL JSON DEL SERVIDOR FLASK
+          try {
+            const textoJson = await err.error.text();
+            const errorObj = JSON.parse(textoJson);
+            mensajeError = errorObj.error || errorObj.message || mensajeError;
+          } catch (e) {
+            console.error('No se pudo parsear el JSON dentro del Blob', e);
+          }
+        } else if (typeof err.error === 'string') {
+          mensajeError = err.error;
         }
-        this.cdr.detectChanges(); // <-- OBLIGA A QUITAR EL LOADER EN CASO DE ERROR
+
+        this.mostrarMensaje(mensajeError, 'error');
+        this.cdr.detectChanges(); // <-- OBLIGA A QUITAR EL LOADER Y MOSTRAR EL ERROR REAL
       }
     });
   }
