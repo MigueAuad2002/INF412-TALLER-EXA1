@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.config import Config
-from app.routes import main_routes,auth_routes, users_routes, tenant_routes, roles_routes, backup_routes,profile_routes, vehiculos_routes, talleres_routes, emergencias_routes, notificaciones_routes, tarifas_routes, cobros_routes, diagnostico_routes, kpis_routes,ofertas_routes
+from app.routes import main_routes,escrow_routes,triaje_routes,auth_routes, users_routes, tenant_routes, roles_routes, backup_routes,profile_routes, vehiculos_routes, talleres_routes, emergencias_routes, notificaciones_routes, tarifas_routes, cobros_routes, diagnostico_routes, kpis_routes,ofertas_routes
+from app.routes import crm_routes
 
 
 
@@ -38,4 +39,8 @@ def create_app() -> FastAPI:
     app.include_router(diagnostico_routes.router) 
     app.include_router(kpis_routes.router)
     app.include_router(ofertas_routes.router,prefix='/api/ofertas')
+    app.include_router(crm_routes.router,prefix="/api/crm")
+    app.include_router(triaje_routes.router,prefix="/api/triaje")
+    app.include_router(escrow_routes.router,prefix="/api/escrow")
+    
     return app

@@ -1,6 +1,46 @@
 from app.classes.postgres import PostgreSQL
 from app.config import Config
 
+def ejecutar_extraccion_y_carga_etl_db():
+    """
+    Limpia la tabla analítica y carga todo el historial de emergencias 
+    disponibles para asegurar la demo.
+    """
+    db = PostgreSQL()
+    db.create_connection()
+    try:
+        # 1. Limpiamos la tabla de hechos antes de recargar para evitar duplicados
+        db.execute_query(f"TRUNCATE TABLE {Config.SCHEMA}.fact_emergencia_analitica", commit=True)
+        
+        # 2. Insertamos todo el historial sin filtrar por fecha (PARA DEMOSTRACIÓN)
+        query = f"""
+            INSERT INTO {Config.SCHEMA}.fact_emergencia_analitica 
+            (fecha_sk, rango_hora, zona_geografica, tipo_emergencia, promedio_respuesta_minutos, cantidad_emergencias, ingresos_generados)
+            SELECT 
+                DATE(e.fecha_inicio) as fecha_sk,
+                CASE 
+                    WHEN EXTRACT(HOUR FROM e.fecha_inicio) < 6 THEN 'Madrugada'
+                    WHEN EXTRACT(HOUR FROM e.fecha_inicio) < 12 THEN 'Mañana'
+                    WHEN EXTRACT(HOUR FROM e.fecha_inicio) < 18 THEN 'Tarde'
+                    ELSE 'Noche'
+                END as rango_hora,
+                'Zona Urbana' as zona_geografica, 
+                e.tipo_emergencia,
+                COALESCE(AVG(EXTRACT(EPOCH FROM (e.fecha_fin - e.fecha_inicio))/60), 30) as promedio_respuesta_minutos,
+                COUNT(e.nro_emergencia) as cantidad_emergencias,
+                COALESCE(SUM(oe.precio_estimado), 0.00) as ingresos_generados
+            FROM {Config.SCHEMA}.emergencia e
+            LEFT JOIN {Config.SCHEMA}.oferta_emergencia oe 
+                ON e.nro_emergencia = oe.nro_emergencia AND UPPER(oe.estado_oferta) = 'ACEPTADA'
+            GROUP BY 1, 2, 3, 4;
+        """
+        # execute_query devuelve el número de filas afectadas
+        filas = db.execute_query(query, commit=True)
+        return filas
+    finally:
+        db.close_connection()
+
+
 def obtener_metricas_dashboard_db():
     db = PostgreSQL()
     db.create_connection()
