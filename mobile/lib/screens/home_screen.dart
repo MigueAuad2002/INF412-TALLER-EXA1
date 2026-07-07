@@ -15,6 +15,7 @@ import '../services/pending_emergencia_service.dart';
 import '../services/emergencia_service.dart';
 import 'notificaciones_screen.dart';
 import 'cotizaciones_screen.dart';
+import 'triaje_chat_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -441,6 +442,19 @@ class _HomeScreenState extends State<HomeScreen> {
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const NotificacionesScreen(),
+                              ),
+                            );
+                          },
+                        ),
+                        _ModuleCard(
+                          icon: Icons.smart_toy_outlined,
+                          title: 'ChatBot IA',
+                          subtitle: 'Triaje técnico automático',
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const TriajeChatScreen(),
                               ),
                             );
                           },
