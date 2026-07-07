@@ -16,6 +16,10 @@ import { EmergenciasHistorialComponent } from './pages/emergencias-historial/eme
 import { NotificacionesComponent } from './pages/notificaciones/notificaciones';
 import { DashboardKpisComponent } from './pages/dashboard-kpis/dashboard-kpis';
 import { TrackingComponent } from './pages/tracking/tracking';
+import { TriajeChatComponent } from './pages/triaje-chat/triaje-chat';
+import { BiDashboardComponent } from './pages/bi-dashboard/bi-dashboard';
+import { MantenimientoCrmComponent } from './pages/mantenimiento-crm/mantenimiento-crm';
+import { DineroRetenidoComponent } from './pages/dinero-retenido/dinero-retenido';
 
 //LAYOUTS
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
@@ -24,9 +28,6 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout';
 import { publicGuard } from './guards/public-guard';
 import { authGuard } from './guards/auth-guard';
 import { BitacoraComponent } from './pages/bitacora/bitacora';
-
-
-
 
 
 
@@ -58,7 +59,11 @@ export const routes: Routes = [
             { path:'tracking', component:TrackingComponent },
             { path:'notificaciones', component:NotificacionesComponent },
             { path:'kpis', component:DashboardKpisComponent },
-            { path:'bitacora', component:BitacoraComponent }
+            { path:'bitacora', component:BitacoraComponent },
+            { path:'triaje-chat', component:TriajeChatComponent },
+            { path:'bi_dashboard', component:BiDashboardComponent },
+            { path:'mantenimiento',component:MantenimientoCrmComponent },
+            { path:'dinero-retenido',component:DineroRetenidoComponent }
         ]
     },
     { path: '**', redirectTo: 'login' }
